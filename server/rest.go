@@ -112,7 +112,7 @@ func (s *RestServer) StartHttpServer(container *restful.Container) {
 		Addr:    fmt.Sprintf("%s:%d", s.HttpHost, s.HttpPort),
 		Handler: container,
 	}
-	if err := s.HttpServer.ListenAndServe(); err != http.ErrServerClosed {
+	if err := s.HttpServer.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
 		log.Logger().Fatal("failed to start http server", zap.Error(err))
 	}
 }
@@ -306,7 +306,7 @@ func (s *RestServer) CreateWebService() {
 		Doc("Delete a category from a item.").
 		Metadata(restfulspec.KeyOpenAPITags, []string{ItemsAPITag}).
 		Param(ws.HeaderParameter("X-API-Key", "API key").DataType("string")).
-		Param(ws.PathParameter("item-id", "ID of the item to delete categoryßßß").DataType("string")).
+		Param(ws.PathParameter("item-id", "ID of the item to delete category").DataType("string")).
 		Param(ws.PathParameter("category", "Category to delete").DataType("string")).
 		Returns(http.StatusOK, "OK", Success{}).
 		Writes(Success{}))
@@ -828,6 +828,11 @@ func (s *RestServer) RecommendCollaborative(ctx *recommendContext) error {
 	return nil
 }
 
+// RecommendUserBased 基于用户正反馈的用户进行推荐
+// 1. 查询用户邻居列表
+// 2. 对每个邻居，从缓存中获取正反馈的物品
+// 3. 对每个物品，如果不在用户已曝光的物品列表中，则加入候选集
+// 4. 对候选集进行排序，返回TopK
 func (s *RestServer) RecommendUserBased(ctx *recommendContext) error {
 	if len(ctx.results) < ctx.n {
 		start := time.Now()
@@ -872,6 +877,11 @@ func (s *RestServer) RecommendUserBased(ctx *recommendContext) error {
 	return nil
 }
 
+// RecommendItemBased 基于用户正反馈的物品进行推荐
+// 1. 查询用户正反馈的商品列表（有上限，最近的N个）
+// 2. 对每个正反馈的物品，从缓存中获取邻居物品
+// 3. 对每个邻居物品，如果不在用户已曝光的物品列表中，则加入候选集
+// 4. 对候选集进行排序，返回TopK
 func (s *RestServer) RecommendItemBased(ctx *recommendContext) error {
 	if len(ctx.results) < ctx.n {
 		start := time.Now()
@@ -1331,7 +1341,7 @@ func (s *RestServer) batchInsertItems(ctx context.Context, response *restful.Res
 		// })
 
 		loadExistedItemsTime time.Duration
-		parseTimesatmpTime   time.Duration
+		parseTimestampTime   time.Duration
 		insertItemsTime      time.Duration
 		insertCacheTime      time.Duration
 	)
@@ -1389,7 +1399,7 @@ func (s *RestServer) batchInsertItems(ctx context.Context, response *restful.Res
 		}
 		count++
 	}
-	parseTimesatmpTime = time.Since(start)
+	parseTimestampTime = time.Since(start)
 
 	// insert items
 	start = time.Now()
@@ -1420,7 +1430,7 @@ func (s *RestServer) batchInsertItems(ctx context.Context, response *restful.Res
 	insertCacheTime = time.Since(start)
 	log.ResponseLogger(response).Info("batch insert items",
 		zap.Duration("load_existed_items_time", loadExistedItemsTime),
-		zap.Duration("parse_timestamp_time", parseTimesatmpTime),
+		zap.Duration("parse_timestamp_time", parseTimestampTime),
 		zap.Duration("insert_items_time", insertItemsTime),
 		zap.Duration("insert_cache_time", insertCacheTime))
 	Ok(response, Success{RowAffected: count})
