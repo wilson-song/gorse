@@ -245,8 +245,8 @@ func Clone(m MatrixFactorization) MatrixFactorization {
 }
 
 const (
-	CollaborativeBPR = "bpr"
-	CollaborativeCCD = "ccd"
+	CollaborativeBPR = "bpr" // Bayesian Personal Ranking
+	CollaborativeCCD = "ccd" // 循环坐标下降法（Cyclic Coordinate Descent)
 )
 
 func GetModelName(m Model) string {
@@ -584,6 +584,7 @@ func (bpr *BPR) Unmarshal(r io.Reader) error {
 	return nil
 }
 
+// CCD 循环坐标下降法（Cyclic Coordinate Descent)
 type CCD struct {
 	BaseMatrixFactorization
 	// Hyper parameters
@@ -596,6 +597,8 @@ type CCD struct {
 }
 
 // NewCCD creates a eALS model.
+// element-wise Alternating Least Squares (eALS) is a variant of weighted-ALS,
+// which is more efficient and has a better performance.
 func NewCCD(params model.Params) *CCD {
 	fast := new(CCD)
 	fast.SetParams(params)
