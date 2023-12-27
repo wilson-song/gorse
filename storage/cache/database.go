@@ -45,29 +45,29 @@ import (
 
 const (
 	// ItemNeighbors is sorted set of neighbors for each item.
-	//  Global item neighbors      - item_neighbors/{item_id}
+	//  Global item neighbors - item_neighbors/{item_id}
 	//  Categorized item neighbors - item_neighbors/{item_id}/{category}
 	ItemNeighbors = "item_neighbors"
 
 	// ItemNeighborsDigest is digest of item neighbors configuration
-	//	Item neighbors digest      - item_neighbors_digest/{item_id}
+	//	Item neighbors digest - item_neighbors_digest/{item_id}
 	ItemNeighborsDigest = "item_neighbors_digest"
 
 	// UserNeighbors is sorted set of neighbors for each user.
-	//  User neighbors      - user_neighbors/{user_id}
+	//  User neighbors - user_neighbors/{user_id}
 	UserNeighbors = "user_neighbors"
 
 	// UserNeighborsDigest is digest of user neighbors configuration
 	//  User neighbors digest      - user_neighbors_digest/{user_id}
 	UserNeighborsDigest = "user_neighbors_digest"
 
-	// CollaborativeRecommend is sorted set of collaborative filtering recommendations for each user.
-	//  Global recommendation      - collaborative_recommend/{user_id}
+	// CollaborativeRecommend is a sorted set of collaborative filtering recommendations for each user.
+	//  Global recommendation - collaborative_recommend/{user_id}
 	//  Categorized recommendation - collaborative_recommend/{user_id}/{category}
 	CollaborativeRecommend = "collaborative_recommend" // collaborative filtering recommendation for each user
 
-	// OfflineRecommend is sorted set of offline recommendation for each user.
-	//  Global recommendation      - offline_recommend/{user_id}
+	// OfflineRecommend is a sorted set of offline recommendation for each user.
+	//  Global recommendation - offline_recommend/{user_id}
 	//  Categorized recommendation - offline_recommend/{user_id}/{category}
 	OfflineRecommend = "offline_recommend"
 
@@ -75,13 +75,13 @@ const (
 	//	Recommendation digest      - offline_recommend_digest/{user_id}
 	OfflineRecommendDigest = "offline_recommend_digest"
 
-	// PopularItems is sorted set of popular items. The format of key:
-	//  Global popular items      - latest_items
+	// PopularItems is a sorted set of popular items. The format of key:
+	//  Global popular items - latest_items
 	//  Categorized popular items - latest_items/{category}
 	PopularItems = "popular_items"
 
-	// LatestItems is sorted set of the latest items. The format of key:
-	//  Global latest items      - latest_items
+	// LatestItems is a sorted set of the latest items. The format of key:
+	//  Global latest items - latest_items
 	//  Categorized the latest items - latest_items/{category}
 	LatestItems = "latest_items"
 
