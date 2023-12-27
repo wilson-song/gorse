@@ -46,6 +46,8 @@ const (
 	eps   float32 = 1e-8
 )
 
+// DeepFM implements DeepFM model.
+// DeepFM is a factorization-machine based neural network.
 type DeepFM struct {
 	BaseFactorizationMachine
 
