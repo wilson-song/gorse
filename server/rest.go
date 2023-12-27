@@ -788,6 +788,9 @@ func (s *RestServer) createRecommendContext(ctx context.Context, userId string, 
 
 type Recommender func(ctx *recommendContext) error
 
+// RecommendOffline 基于离线推荐的推荐
+// 1. 从缓存中获取离线推荐
+// 2. 对每个推荐的物品，如果不在用户已曝光的物品列表中，则加入候选集
 func (s *RestServer) RecommendOffline(ctx *recommendContext) error {
 	if len(ctx.results) < ctx.n {
 		start := time.Now()
@@ -927,6 +930,9 @@ func (s *RestServer) RecommendItemBased(ctx *recommendContext) error {
 	return nil
 }
 
+// RecommendLatest 基于最新的物品进行推荐
+// 1. 从缓存中获取最新的物品
+// 2. 对每个物品，如果不在用户已曝光的物品列表中，则加入候选集
 func (s *RestServer) RecommendLatest(ctx *recommendContext) error {
 	if len(ctx.results) < ctx.n {
 		start := time.Now()
@@ -947,6 +953,9 @@ func (s *RestServer) RecommendLatest(ctx *recommendContext) error {
 	return nil
 }
 
+// RecommendPopular 基于最热门的物品进行推荐
+// 1. 从缓存中获取最热门的物品
+// 2. 对每个物品，如果不在用户已曝光的物品列表中，则加入候选集
 func (s *RestServer) RecommendPopular(ctx *recommendContext) error {
 	if len(ctx.results) < ctx.n {
 		start := time.Now()
