@@ -158,6 +158,7 @@ const (
 	FMRegression     FMTask = 'r'
 )
 
+// FM implements Factorization Machine.
 type FM struct {
 	BaseFactorizationMachine
 	// Model parameters
