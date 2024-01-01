@@ -17,17 +17,18 @@ package master
 import (
 	"encoding/binary"
 	std_errors "errors"
+	"os"
+	"path/filepath"
+
 	"github.com/juju/errors"
 	"github.com/zhenghaoz/gorse/base/encoding"
 	"github.com/zhenghaoz/gorse/base/log"
 	"github.com/zhenghaoz/gorse/model/click"
 	"github.com/zhenghaoz/gorse/model/ranking"
 	"go.uber.org/zap"
-	"os"
-	"path/filepath"
 )
 
-// LocalCache is local cache for the master node.
+// LocalCache is a local cache for the master node.
 type LocalCache struct {
 	path                string
 	RankingModelName    string
@@ -45,7 +46,7 @@ type LocalCache struct {
 func LoadLocalCache(path string) (*LocalCache, error) {
 	log.Logger().Info("load cache", zap.String("path", path))
 	state := &LocalCache{path: path}
-	// check if file exists
+	// check if the file exists
 	if _, err := os.Stat(path); err != nil {
 		if std_errors.Is(err, os.ErrNotExist) {
 			return state, errors.NotFoundf("cache folder %s", path)

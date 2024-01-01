@@ -1417,7 +1417,7 @@ func (m *Master) LoadDataFromDatabase(ctx context.Context, database data.Databas
 	}
 	rankingDataset = ranking.NewMapIndexDataset()
 
-	// create filers for latest items
+	// create filers for the latest items
 	latestItemsFilters := make(map[string]*heap.TopKFilter[string, float64])
 	latestItemsFilters[""] = heap.NewTopKFilter[string, float64](m.Config.Recommend.CacheSize)
 
@@ -1443,7 +1443,7 @@ func (m *Master) LoadDataFromDatabase(ctx context.Context, database data.Databas
 				if userLabelCount[feature.Name] == 1 {
 					userLabelFirst[feature.Name] = userIndex
 				}
-				// Add the label to the index in second occurrence.
+				// Add the label to the index in the second occurrence.
 				if userLabelCount[feature.Name] == 2 {
 					userLabelIndex.Add(feature.Name)
 					firstUserIndex := userLabelFirst[feature.Name]
@@ -1498,7 +1498,7 @@ func (m *Master) LoadDataFromDatabase(ctx context.Context, database data.Databas
 				if itemLabelCount[feature.Name] == 1 {
 					itemLabelFirst[feature.Name] = itemIndex
 				}
-				// Add the label to the index in second occurrence.
+				// Add the label to the index in the second occurrence.
 				if itemLabelCount[feature.Name] == 2 {
 					itemLabelIndex.Add(feature.Name)
 					firstItemIndex := itemLabelFirst[feature.Name]
@@ -1515,7 +1515,7 @@ func (m *Master) LoadDataFromDatabase(ctx context.Context, database data.Databas
 					})
 				}
 			}
-			if item.IsHidden { // set hidden flag
+			if item.IsHidden { // set a hidden flag
 				rankingDataset.HiddenItems[itemIndex] = true
 			} else if !item.Timestamp.IsZero() { // add items to the latest items filter
 				latestItemsFilters[""].Push(item.ItemId, float64(item.Timestamp.Unix()))
@@ -1539,7 +1539,7 @@ func (m *Master) LoadDataFromDatabase(ctx context.Context, database data.Databas
 	LoadDatasetStepSecondsVec.WithLabelValues("load_items").Set(time.Since(start).Seconds())
 	span.Add(1)
 
-	// create positive set
+	// create a positive set
 	popularCount := make([]int32, rankingDataset.ItemCount())
 	positiveSet := make([]mapset.Set[int32], rankingDataset.UserCount())
 	for i := range positiveSet {
@@ -1573,7 +1573,7 @@ func (m *Master) LoadDataFromDatabase(ctx context.Context, database data.Databas
 				if itemIndex == base.NotId {
 					continue
 				}
-				// insert feedback to positive set
+				// insert feedback to the positive set
 				positiveSet[userIndex].Add(itemIndex)
 
 				mu.Lock()
@@ -1603,7 +1603,7 @@ func (m *Master) LoadDataFromDatabase(ctx context.Context, database data.Databas
 	LoadDatasetStepSecondsVec.WithLabelValues("load_positive_feedback").Set(time.Since(start).Seconds())
 	span.Add(1)
 
-	// create negative set
+	// create a negative set
 	negativeSet := make([]mapset.Set[int32], rankingDataset.UserCount())
 	for i := range negativeSet {
 		negativeSet[i] = mapset.NewSet[int32]()
