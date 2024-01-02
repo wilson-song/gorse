@@ -1667,7 +1667,7 @@ func (m *Master) LoadDataFromDatabase(ctx context.Context, database data.Databas
 	}
 	for userIndex := range positiveSet {
 		if positiveSet[userIndex].Cardinality() == 0 || negativeSet[userIndex].Cardinality() == 0 {
-			// release positive set and negative set
+			// release the positive set and negative set
 			positiveSet[userIndex] = nil
 			negativeSet[userIndex] = nil
 			continue
