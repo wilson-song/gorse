@@ -66,7 +66,7 @@ type Master struct {
 	cacheFile      string
 	managedMode    bool
 
-	// cluster meta cache
+	// cluster meta-cache
 	ttlCache       *ttlcache.Cache
 	nodesInfo      map[string]*Node
 	nodesInfoMutex sync.RWMutex
@@ -340,8 +340,8 @@ func (m *Master) RunPrivilegedTasksLoop() {
 	}
 }
 
-// RunRagtagTasksLoop searches optimal recommendation model in background. It never modifies variables other than
-// rankingModelSearcher, clickSearchedModel and clickSearchedScore.
+// RunRagtagTasksLoop searches an optimal recommendation model in the background.
+// It never modifies variables other than rankingModelSearcher, clickSearchedModel and clickSearchedScore.
 func (m *Master) RunRagtagTasksLoop() {
 	defer base.CheckPanic()
 	<-m.loadDataChan.C
