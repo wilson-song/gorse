@@ -112,7 +112,7 @@ func (m *Master) runLoadDatasetTask() error {
 		log.Logger().Error("failed to write latest update latest items time", zap.Error(err))
 	}
 
-	// write statistics to database
+	// write statistics to the database
 	UsersTotal.Set(float64(rankingDataset.UserCount()))
 	if err = m.CacheClient.Set(ctx, cache.Integer(cache.Key(cache.GlobalMeta, cache.NumUsers), rankingDataset.UserCount())); err != nil {
 		log.Logger().Error("failed to write number of users", zap.Error(err))
@@ -861,7 +861,7 @@ func weightedSum(a []int32, weights []float32) float32 {
 }
 
 // checkUserNeighborCacheTimeout checks if user neighbor cache stale.
-// 1. if cache is empty, stale.
+// 1. if the cache is empty, stale.
 // 2. if modified time > update time, stale.
 func (m *Master) checkUserNeighborCacheTimeout(userId string) bool {
 	var (
@@ -914,7 +914,7 @@ func (m *Master) checkUserNeighborCacheTimeout(userId string) bool {
 }
 
 // checkItemNeighborCacheTimeout checks if item neighbor cache stale.
-// 1. if cache is empty, stale.
+// 1. if the cache is empty, stale.
 // 2. if modified time > update time, stale.
 func (m *Master) checkItemNeighborCacheTimeout(itemId string, categories []string) bool {
 	var (
@@ -1003,8 +1003,8 @@ func (t *FitRankingModelTask) run(ctx context.Context, j *task.JobsAllocator) er
 		(bestRankingName != t.rankingModelName || bestRankingModel.GetParams().ToString() != t.RankingModel.GetParams().ToString()) &&
 		(bestRankingScore.NDCG > t.rankingScore.NDCG) {
 		// 1. best ranking model must have been found.
-		// 2. best ranking model must be different from current model
-		// 3. best ranking model must perform better than current model
+		// 2. the best ranking model must be different from current model
+		// 3. the best ranking model must perform better than the current model
 		t.RankingModel = bestRankingModel
 		t.rankingModelName = bestRankingName
 		t.rankingScore = bestRankingScore
@@ -1069,7 +1069,7 @@ func (t *FitRankingModelTask) run(ctx context.Context, j *task.JobsAllocator) er
 	return nil
 }
 
-// FitClickModelTask fits click model using latest data. After model fitted, following states are changed:
+// FitClickModelTask fits the click model using the latest data. After model fitted, following states are changed:
 // 1. Click model version are increased.
 // 2. Click model score are updated.
 // 3. Click model, version and score are persisted to local cache.
@@ -1121,7 +1121,7 @@ func (t *FitClickModelTask) run(ctx context.Context, j *task.JobsAllocator) erro
 		bestClickScore.Precision > t.clickScore.Precision {
 		// 1. best click model must have been found.
 		// 2. best click model must be different from current model
-		// 3. best click model must perform better than current model
+		// 3. best click model must perform better than the current model
 		t.ClickModel = bestClickModel
 		t.clickScore = bestClickScore
 		shouldFit = true
@@ -1143,7 +1143,7 @@ func (t *FitClickModelTask) run(ctx context.Context, j *task.JobsAllocator) erro
 		SetJobsAllocator(j))
 	RankingFitSeconds.Set(time.Since(startFitTime).Seconds())
 
-	// update match model
+	// update the match model
 	t.clickModelMutex.Lock()
 	t.ClickModel = clickModel
 	t.clickScore = score
@@ -1686,7 +1686,7 @@ func (m *Master) LoadDataFromDatabase(ctx context.Context, database data.Databas
 			clickDataset.Target.Append(-1)
 			clickDataset.NegativeCount++
 		}
-		// release positive set and negative set
+		// release the positive set and negative set
 		positiveSet[userIndex] = nil
 		negativeSet[userIndex] = nil
 	}
