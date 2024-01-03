@@ -610,7 +610,7 @@ func (t *FindUserNeighborsTask) run(ctx context.Context, j *task.JobsAllocator) 
 		}
 	}
 	labeledUsers := make([][]int32, dataset.NumUserLabels)
-	labelIDF := make([]float32, dataset.NumUserLabels)
+	labelIDF := make([]float32, dataset.NumUserLabels) // 逆文档频率(Inverse Document Frequency)
 	if t.Config.Recommend.UserNeighbors.NeighborType == config.NeighborTypeSimilar ||
 		t.Config.Recommend.UserNeighbors.NeighborType == config.NeighborTypeAuto {
 		for i, userLabels := range dataset.UserFeatures {
