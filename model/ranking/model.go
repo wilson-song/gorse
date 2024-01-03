@@ -94,23 +94,23 @@ type Model interface {
 
 type MatrixFactorization interface {
 	Model
-	// Predict the rating given by a user (userId) to a item (itemId).
+	// Predict the rating given by a user (userId) to an item (itemId).
 	Predict(userId, itemId string) float32
-	// InternalPredict predicts rating given by a user index and a item index
+	// InternalPredict predicts rating given by a user index and an item index
 	InternalPredict(userIndex, itemIndex int32) float32
 	// GetUserIndex returns user index.
 	GetUserIndex() base.Index
 	// GetItemIndex returns item index.
 	GetItemIndex() base.Index
-	// IsUserPredictable returns false if user has no feedback and its embedding vector never be trained.
+	// IsUserPredictable returns false if a user has no feedback and its embedding vector never be trained.
 	IsUserPredictable(userIndex int32) bool
-	// IsItemPredictable returns false if item has no feedback and its embedding vector never be trained.
+	// IsItemPredictable returns false if an item has no feedback and its embedding vector never be trained.
 	IsItemPredictable(itemIndex int32) bool
 	// Marshal model into byte stream.
 	Marshal(w io.Writer) error
 	// Unmarshal model from byte stream.
 	Unmarshal(r io.Reader) error
-	// Bytes returns used memory.
+	// Bytes return used memory.
 	Bytes() int
 }
 
@@ -161,7 +161,7 @@ func (baseModel *BaseMatrixFactorization) GetItemIndex() base.Index {
 	return baseModel.ItemIndex
 }
 
-// IsUserPredictable returns false if user has no feedback and its embedding vector never be trained.
+// IsUserPredictable returns false if a user has no feedback and its embedding vector never be trained.
 func (baseModel *BaseMatrixFactorization) IsUserPredictable(userIndex int32) bool {
 	if userIndex >= baseModel.UserIndex.Len() {
 		return false
@@ -169,7 +169,7 @@ func (baseModel *BaseMatrixFactorization) IsUserPredictable(userIndex int32) boo
 	return baseModel.UserPredictable.Test(uint(userIndex))
 }
 
-// IsItemPredictable returns false if item has no feedback and its embedding vector never be trained.
+// IsItemPredictable returns false if an item has no feedback and its embedding vector never be trained.
 func (baseModel *BaseMatrixFactorization) IsItemPredictable(itemIndex int32) bool {
 	if itemIndex >= baseModel.ItemIndex.Len() {
 		return false
@@ -292,7 +292,7 @@ func UnmarshalModel(r io.Reader) (MatrixFactorization, error) {
 	return nil, fmt.Errorf("unknown model %v", name)
 }
 
-// BPR means Bayesian Personal Ranking, is a pairwise learning algorithm for matrix factorization
+// BPR means Bayesian Personal Ranking, is a pairwise learning algorithm for the matrix factorization
 // model with implicit feedback. The pairwise ranking between item i and j for user u is estimated
 // by:
 //
@@ -304,7 +304,7 @@ func UnmarshalModel(r io.Reader) (MatrixFactorization, error) {
 //				  optimized. Default is 0.01.
 //	 Lr 		- The learning rate of SGD. Default is 0.05.
 //	 nFactors	- The number of latent factors. Default is 10.
-//	 NEpochs	- The number of iteration of the SGD procedure. Default is 100.
+//	 NEpochs	- The number of iterations of the SGD procedure. Default is 100.
 //	 InitMean	- The mean of initial random latent factors. Default is 0.
 //	 InitStdDev	- The standard deviation of initial random latent factors. Default is 0.001.
 type BPR struct {
@@ -401,7 +401,7 @@ func (bpr *BPR) Fit(ctx context.Context, trainSet, valSet *DataSet, config *FitC
 	for i := 0; i < maxJobs; i++ {
 		rng[i] = base.NewRandomGenerator(bpr.GetRandomGenerator().Int63())
 	}
-	// Convert array to hashmap
+	// Convert an array to hashmap
 	userFeedback := make([]mapset.Set[int32], trainSet.UserCount())
 	for u := range userFeedback {
 		userFeedback[u] = mapset.NewSet[int32]()
@@ -458,7 +458,7 @@ func (bpr *BPR) Fit(ctx context.Context, trainSet, valSet *DataSet, config *FitC
 			floats.MulConstTo(userFactor[workerId], grad, temp[workerId])
 			floats.MulConstAddTo(positiveItemFactor[workerId], -bpr.reg, temp[workerId])
 			floats.MulConstAddTo(temp[workerId], bpr.lr, bpr.ItemFactor[posIndex])
-			// Update negative item latent factor: -w_u
+			// Update a negative item latent factor: -w_u
 			floats.MulConstTo(userFactor[workerId], -grad, temp[workerId])
 			floats.MulConstAddTo(negativeItemFactor[workerId], -bpr.reg, temp[workerId])
 			floats.MulConstAddTo(temp[workerId], bpr.lr, bpr.ItemFactor[negIndex])
@@ -486,7 +486,7 @@ func (bpr *BPR) Fit(ctx context.Context, trainSet, valSet *DataSet, config *FitC
 		span.Add(1)
 	}
 	span.End()
-	// restore best snapshot
+	// restore the best snapshot
 	bpr.UserFactor = snapshots.BestWeights[0].([][]float32)
 	bpr.ItemFactor = snapshots.BestWeights[1].([][]float32)
 	log.Logger().Info("fit bpr complete",
@@ -596,9 +596,9 @@ type CCD struct {
 	weight     float32
 }
 
-// NewCCD creates a eALS model.
+// NewCCD creates an eALS model.
 // element-wise Alternating Least Squares (eALS) is a variant of weighted-ALS,
-// which is more efficient and has a better performance.
+// which is more efficient and has better performance.
 func NewCCD(params model.Params) *CCD {
 	fast := new(CCD)
 	fast.SetParams(params)
@@ -842,7 +842,7 @@ func (ccd *CCD) Fit(ctx context.Context, trainSet, valSet *DataSet, config *FitC
 	}
 	span.End()
 
-	// restore best snapshot
+	// restore the best snapshot
 	ccd.UserFactor = snapshots.BestWeights[0].([][]float32)
 	ccd.ItemFactor = snapshots.BestWeights[1].([][]float32)
 	log.Logger().Info("fit ccd complete",
