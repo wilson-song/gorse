@@ -256,12 +256,13 @@ func (evaluator *OnlineEvaluator) Read(userIndex, itemIndex int32, timestamp tim
 			evaluator.ReadFeedbacks[index][userIndex] = mapset.NewSet[int32]()
 		}
 		evaluator.ReadFeedbacks[index][userIndex].Add(itemIndex)
-		evaluator.ReverseIndex[lo.Tuple2[int32, int32]{userIndex, itemIndex}] = timestamp
+		evaluator.ReverseIndex[lo.Tuple2[int32, int32]{A: userIndex, B: itemIndex}] = timestamp
 	}
 }
 
 func (evaluator *OnlineEvaluator) Positive(feedbackType string, userIndex, itemIndex int32, timestamp time.Time) {
-	evaluator.PositiveFeedbacks[feedbackType] = append(evaluator.PositiveFeedbacks[feedbackType], lo.Tuple3[int32, int32, time.Time]{userIndex, itemIndex, timestamp})
+	evaluator.PositiveFeedbacks[feedbackType] = append(evaluator.PositiveFeedbacks[feedbackType],
+		lo.Tuple3[int32, int32, time.Time]{A: userIndex, B: itemIndex, C: timestamp})
 }
 
 func (evaluator *OnlineEvaluator) Evaluate() []cache.TimeSeriesPoint {
@@ -273,7 +274,7 @@ func (evaluator *OnlineEvaluator) Evaluate() []cache.TimeSeriesPoint {
 		}
 
 		for _, f := range positiveFeedbacks {
-			if readTime, exist := evaluator.ReverseIndex[lo.Tuple2[int32, int32]{f.A, f.B}]; exist /* && readTime.Unix() <= f.C.Unix() */ {
+			if readTime, exist := evaluator.ReverseIndex[lo.Tuple2[int32, int32]{A: f.A, B: f.B}]; exist /* && readTime.Unix() <= f.C.Unix() */ {
 				// truncate timestamp to day
 				truncatedTime := readTime.Truncate(time.Hour * 24)
 				readIndex := int(evaluator.TruncatedDateToday.Sub(truncatedTime) / time.Hour / 24)
@@ -290,10 +291,10 @@ func (evaluator *OnlineEvaluator) Evaluate() []cache.TimeSeriesPoint {
 				var sum float64
 				for userIndex, readSet := range evaluator.ReadFeedbacks[i] {
 					if positiveSet, exist := positiveFeedbackSets[i][userIndex]; exist {
-						sum += float64(positiveSet.Cardinality()) / float64(readSet.Cardinality())
+						sum += float64(positiveSet.Cardinality()) / float64(readSet.Cardinality()) // 物品数量/物品数量
 					}
 				}
-				rate = sum / float64(len(evaluator.ReadFeedbacks[i]))
+				rate = sum / float64(len(evaluator.ReadFeedbacks[i])) // 正反馈率/用户数量
 			}
 			measurements = append(measurements, cache.TimeSeriesPoint{
 				Name:      cache.Key(PositiveFeedbackRate, feedbackType),

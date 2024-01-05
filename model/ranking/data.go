@@ -37,8 +37,8 @@ type DataSet struct {
 	ItemIndex      base.Index
 	FeedbackUsers  base.Array[int32]
 	FeedbackItems  base.Array[int32]
-	UserFeedback   [][]int32
-	ItemFeedback   [][]int32
+	UserFeedback   [][]int32 // Key: user index; Value: item index, maybe duplicated
+	ItemFeedback   [][]int32 // Key: item index; Value: user index, maybe duplicated
 	Negatives      [][]int32
 	ItemFeatures   [][]lo.Tuple2[int32, float32]
 	UserFeatures   [][]lo.Tuple2[int32, float32]

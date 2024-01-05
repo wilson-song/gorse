@@ -188,7 +188,7 @@ func (m *Master) runLoadDatasetTask() error {
 	// split click dataset
 	startTime = time.Now()
 	m.clickDataMutex.Lock()
-	m.clickTrainSet, m.clickTestSet = clickDataset.Split(0.2, 0)
+	m.clickTrainSet, m.clickTestSet = clickDataset.Split(0.2, 0) // 20% for testing
 	clickDataset = nil
 	m.clickDataMutex.Unlock()
 	LoadDatasetStepSecondsVec.WithLabelValues("split_click_dataset").Set(time.Since(startTime).Seconds())

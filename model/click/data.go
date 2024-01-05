@@ -256,7 +256,7 @@ func (dataset *Dataset) Split(ratio float32, seed int64) (*Dataset, *Dataset) {
 	sampledIndex := mapset.NewSet(rng.Sample(0, dataset.Count(), numTestSize)...)
 	for i := 0; i < dataset.Target.Len(); i++ {
 		if sampledIndex.Contains(i) {
-			// add samples into test set
+			// add samples into the test set
 			testSet.Users.Append(dataset.Users.Get(i))
 			testSet.Items.Append(dataset.Items.Get(i))
 			if dataset.ContextFeatures != nil {
@@ -269,7 +269,7 @@ func (dataset *Dataset) Split(ratio float32, seed int64) (*Dataset, *Dataset) {
 				testSet.NegativeCount++
 			}
 		} else {
-			// add samples into train set
+			// add samples into the train set
 			trainSet.Users.Append(dataset.Users.Get(i))
 			trainSet.Items.Append(dataset.Items.Get(i))
 			if dataset.ContextFeatures != nil {
